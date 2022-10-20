@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">\<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>View </title>
+    <style>
+        body{
+       background-color:antiquewhite;
+        }
+        h1 {
+            text-align: center;
+        }
+        .image {
+            height: 55%;
+        }
+        .card {
+            height: 450px;
+            width: 300px;
+            margin: 20px;
+            margin-left: 80px;
+            display: inline-block;
+             background-color: white;
+        }
+        .container {
+            padding: 2px 16px;
+            height: 45%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1> Pet's World</h1><hr>
+<% data.forEach(function(item){ %>
+            <div class="card">
+                <div class="image">
+                    <img src="/images/<%= item.img %>" alt="Profile Picture Not Found" style="height: 100%; width: 100%;">
+                </div>
+                <div class="container">
+                    <h4>
+                       <span>Product Id :</span> <%= item.pid %>
+                    </h4>
+                    <h4>
+                        <span>Name :</span>    <%= item.Name %>
+                    </h4>
+                    <h4>
+                        <span>Price :</span>    <%= item.price %>  <span> Rs. </span>
+                    </h4>
+                   
+                    <a href="/update/<%= item.pid %>" class="btn btn-primary">Edit</a>
+                    <a href="/product/<%= item.pid %>" class="btn btn-danger">Delete</a>
+                    <a href="/add %>" class="btn btn-primary">Add</a>
+                
+                </div>
+            </div>
+            <% }); %>
+</body>
+</html>
