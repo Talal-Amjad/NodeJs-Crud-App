@@ -98,7 +98,65 @@ router.get("/view", (req, res) => {
     });
 });
 
+//horizontal view
+router.get("/horizontal", (req, res) => {
+    const dataCountQuery = "SELECT COUNT(*) FROM users";
+    connection.query(dataCountQuery, function(err,result){
+        if(err) throw err;
 
+        let dataCount = result[0]["COUNT(*)"];
+        let pageNo = req.query.page ? req.query.page : 1;
+        let dataPerPages = req.query.data ? req.query.data : 2;
+        let startLimit = (pageNo - 1) * dataPerPages;
+        let totalPages = Math.ceil(dataCount/dataPerPages);
+
+        // console.log(dataCount, "\n", pageNo, "\n",dataPerPages, "\n",startLimit, "\n",totalPages, "\n");
+
+        const Query = `SELECT * FROM users LIMIT ${startLimit}, ${dataPerPages}`;
+        connection.query(Query, function(err,result){
+            if(err) throw err;
+            // res.send(result);
+            res.render( "horizontal", 
+                 {
+                    data: result,
+                    pages: totalPages,
+                    CurrentPage: pageNo,
+                    lastPage: totalPages
+                 }
+            );
+        })
+    });
+});
+//table view
+router.get("/Table", (req, res) => {
+ 
+    const dataCountQuery = "SELECT COUNT(*) FROM users";
+    connection.query(dataCountQuery, function(err,result){
+        if(err) throw err;
+
+        let dataCount = result[0]["COUNT(*)"];
+        let pageNo = req.query.page ? req.query.page : 1;
+        let dataPerPages = req.query.data ? req.query.data : 2;
+        let startLimit = (pageNo - 1) * dataPerPages;
+        let totalPages = Math.ceil(dataCount/dataPerPages);
+
+        // console.log(dataCount, "\n", pageNo, "\n",dataPerPages, "\n",startLimit, "\n",totalPages, "\n");
+
+        const Query = `SELECT * FROM users LIMIT ${startLimit}, ${dataPerPages}`;
+        connection.query(Query, function(err,result){
+            if(err) throw err;
+            // res.send(result);
+            res.render( "Table", 
+                 {
+                    data: result,
+                    pages: totalPages,
+                    CurrentPage: pageNo,
+                    lastPage: totalPages
+                 }
+            );
+        })
+    });
+});
 //search
 router.get("/search", (req, res) => { res.render("search"); });
 router.post('/search', (req, res) => {
