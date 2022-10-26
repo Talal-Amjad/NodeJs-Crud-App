@@ -13,21 +13,23 @@
 
     <div class="container">
 
-        <form id="form" action="/update/<%= data[0].pid%>" method="post" enctype="multipart/form-data">
+        <form id="form" action="/update/<%= data[0].user_id%>" method="post" enctype="multipart/form-data">
 
             <Div class="header">
-                <h1>Edit Product</h1>
+                <h1>Edit Details</h1>
             </Div>
             <div class="inputs">
 
-                <span>Product ID:</span>
-                <input type="text" placeholder="00-0000" id="User_id" name="pid" value="<%= data[0].pid%>">
-                <span>Product Name:</span>
+                <span>ID:</span>
+                <input type="text" placeholder="00-0000" id="User_id" name="pid" value="<%= data[0].user_id%>">
+                <span>Name:</span>
                 <input type="text" placeholder=" abc" id="pid" name="Name" value="<%=data[0].Name%>">
-                <span>Price:</span>
-                <input type="number" placeholder="Rs" id="price" name="price" value="<%=data[0].price%>">
+                <span>Dept:</span>
+                <input type="text" placeholder="Department" id="price" name="Dept" value="<%=data[0].Dept%>">
+                <span>City:</span>
+                <input type="text" placeholder="XYZ" id="price" name="City" value="<%=data[0].City%>">
                 <span>Add Picture:</span>
-                <input type="file" placeholder="XYZ" id="img" name="img">
+                <input type="file" placeholder="XYZ" id="img" name="img" value="%=data[0].profile">
             </div>
             <input type="submit" value="submit" name="submit">
             <input type="reset" value="Reset">
