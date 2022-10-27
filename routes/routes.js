@@ -76,7 +76,7 @@ router.get("/view", (req, res) => {
 
         let dataCount = result[0]["COUNT(*)"];
         let pageNo = req.query.page ? req.query.page : 1;
-        let dataPerPages = req.query.data ? req.query.data : 2;
+        let dataPerPages = req.query.data ? req.query.data : 4;
         let startLimit = (pageNo - 1) * dataPerPages;
         let totalPages = Math.ceil(dataCount/dataPerPages);
 
@@ -106,7 +106,7 @@ router.get("/horizontal", (req, res) => {
 
         let dataCount = result[0]["COUNT(*)"];
         let pageNo = req.query.page ? req.query.page : 1;
-        let dataPerPages = req.query.data ? req.query.data : 2;
+        let dataPerPages = req.query.data ? req.query.data : 4;
         let startLimit = (pageNo - 1) * dataPerPages;
         let totalPages = Math.ceil(dataCount/dataPerPages);
 
@@ -136,7 +136,7 @@ router.get("/Table", (req, res) => {
 
         let dataCount = result[0]["COUNT(*)"];
         let pageNo = req.query.page ? req.query.page : 1;
-        let dataPerPages = req.query.data ? req.query.data : 2;
+        let dataPerPages = req.query.data ? req.query.data : 4;
         let startLimit = (pageNo - 1) * dataPerPages;
         let totalPages = Math.ceil(dataCount/dataPerPages);
 
@@ -167,7 +167,7 @@ router.post('/search', (req, res) => {
 
         let dataCount = result[0]["COUNT(*)"];
         let pageNo = req.query.page ? req.query.page : 1;
-        let dataPerPages = req.query.data ? req.query.data : 2;
+        let dataPerPages = req.query.data ? req.query.data : 4;
         let startLimit = (pageNo - 1) * dataPerPages;
         let totalPages = Math.ceil(dataCount/dataPerPages);
 
@@ -256,11 +256,11 @@ router.get("/view/Sorting/:sorting/:page", (req, res) => {
         let sorting = req.params.sorting;
         let dataCount = result[0]["COUNT(*)"];
         let pageNo = req.params.page ? req.params.page : 1;
-        let dataPerPages = req.query.data ? req.query.data : 2;
+        let dataPerPages = req.query.data ? req.query.data : 4;
         let startLimit = (pageNo - 1) * dataPerPages;
         let totalPages = Math.ceil(dataCount / dataPerPages);
 
-        const Query = `SELECT * FROM users ORDER BY Name ${sorting} LIMIT ${startLimit}, ${dataPerPages} `;
+        const Query = `SELECT * FROM users ORDER BY user_id ${sorting} LIMIT ${startLimit}, ${dataPerPages} `;
         connection.query(Query, function (err, result) {
             if (err) throw err;
             res.render("view", {
@@ -282,7 +282,7 @@ router.get("/view/Department/:dept/:page", (req, res) => {
         let dept = req.params.dept;
         let dataCount = result[0]["COUNT(*)"];
         let pageNo = req.params.page ? req.params.page : 1;
-        let dataPerPages = req.query.data ? req.query.data : 2;
+        let dataPerPages = req.query.data ? req.query.data : 4;
         let startLimit = (pageNo - 1) * dataPerPages;
         let totalPages = Math.ceil(dataCount / dataPerPages);
 
