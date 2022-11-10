@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/view.css">
+    <title>View </title>
+    
+</head>
+
+<body>
+ 
+   
+    <div class="topnav">
+     <strong>Filters : </strong> 
+        <div class="dropdown">
+            <button>Sorting</button>
+            <div>
+              <a href="/view/Sorting/ASC/<%=+CurrentPage%>">Ascending</a>
+              <a href="/view/Sorting/DESC/<%=+CurrentPage%>">Descending</a>
+            </div>
+          </div> 
+
+          <div class="dropdown">
+            <button>Department</button>
+            <div>
+              <a href="/view/Department/CS/<%=+CurrentPage%>">CS</a>
+              <a href="/view/Department/SE/<%=+CurrentPage%>">SE</a>
+              <a href="/view/Department/BBA/<%=+CurrentPage%>">BBA</a>
+              <a href="/view/Department/EE/<%=+CurrentPage%>">EE</a>
+            </div>
+          </div> 
+          <strong>  Views : </strong> 
+          <div class="dropdown">
+            <button>Views</button>
+            <div>
+              <a href="/horizontal">Horizontal</a>
+              <a href="/Table">Table</a>
+            </div>
+          </div> 
+
+        <div class="search-container">
+            <form action="/search" method="post">
+                <input type="text" placeholder="Search.." name="sname">
+                <button type="submit">Search</button>
+            </form>
+            
+        </div>
+    </div>
+   
+    <h1>Manage Users</h1>
+    <hr>
+    <div class="main">
+        <% data.forEach(function(item){ %>
+            <div class="card">
+                <div class="image">
+                    <img src="/images/<%= item.profile %>" alt="Profile Picture Not Found"
+                        style="height: 100%; width: 100%;">
+                </div>
+                <div class="container">
+                    <h4>
+                        <span>Id :</span>
+                        <%= item.user_id %>
+                    </h4>
+                    <h4>
+                        <span>Name :</span>
+                        <%= item.Name %>
+                    </h4>
+                    <h4>
+                        <span>Dept
+                        <%= item.Dept %>
+                    </h4>
+                    <h4>
+                        <span>City
+                        <%= item.City %> 
+                    </h4>
+
+                  
+
+                </div>
+            </div>
+            <% }); %>
+    </div>
+
+    <div class="container mt-3 d-flex justify-content-cente">
+        <ul class="pagination">
+
+            <% if(CurrentPage==1) {%>
+                <li class="page-item disabled"><a class="page-link" href="">Previous</a></li>
+                <% } else {%>
+                    <li class="page-item"><a class="page-link" href="/view/?page=<%=CurrentPage-1%>">Previous</a></li>
+                    <% } %>
+
+                        <% for(let i=1; i<=pages; i++){ %>
+                            <% if(i==CurrentPage){ %>
+                                <li class="page-item active"><a class="page-link" href="/view/?page=<%=i%>">
+                                        <%=i%>
+                                    </a></li>
+                                <% } else {%>
+                                    <li class="page-item"><a class="page-link" href="/view/?page=<%=i%>">
+                                            <%=i%>
+                                        </a></li>
+                                    <% } %>
+                                        <% } %>
+
+                                            <% if(CurrentPage==lastPage) {%>
+                                                <li class="page-item disabled"><a class="page-link" href="">Next</a>
+                                                </li>
+                                                <% } else {%>
+                                                    <li class="page-item "><a class="page-link"
+                                                            href="/view/?page=<%=+CurrentPage+1%>">Next</a></li>
+                                                    <% } %>
+        </ul>
+    </div>
+</body>
+
+</html>

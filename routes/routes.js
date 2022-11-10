@@ -2,6 +2,20 @@ const express = require("express");
 const router = express.Router();
 const bodyParser = require("body-parser");
 const multer = require("multer");
+//cookies and sessions
+const cookieParser = require("cookie-parser");
+const session = require('express-session');
+const Auth = require("../middleware/auth.js");
+router.use(cookieParser());
+
+router.use(
+    session({
+        secret: "Web ki assignment",
+        resave: false,
+        saveUninitialized: true,
+        cookie: { path: "/", httpOnly: true, secure: false, maxAge: 1 * 60 * 60 * 1000 },//session will expire after 1 hour
+    })
+);
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) { cb(null, "./public/images") },
@@ -41,12 +55,34 @@ router.post("/signIn", (req, res) => {
 
     const UserName = req.body.username;
     const Password = req.body.password;
+    const Role = req.body.role;
 
-    const Query = `SELECT UserName, Password FROM ADMIN WHERE UserName = '${UserName}' AND Password = '${Password}'`;
-    connection.query(Query, function (err, result) {
+    let TableName = "";
+    Role == "admin" ? TableName = "ADMIN" : TableName = "USER";
+    
+    console.log(Role, " ", UserName," ",Password," ",TableName);
+
+    const Query = `SELECT UserName, Password FROM ${TableName} WHERE UserName = '${UserName}' AND Password = '${Password}'`;
+    connection.query(Query, function (err, result, fields) {
         if (err) throw err;
         if (result.length > 0) {
-            res.redirect("view");
+
+            if (Role == "admin") {
+                const admin = { username: UserName, password: Password };
+                req.session.admin = admin;
+                res.cookie("CurrentRole", "Admin");
+                res.redirect("/view");
+            }
+            else if (Role == "user") {
+                const user = { username: UserName, password: Password };
+                req.session.user = user;
+                res.cookie("CurrentRole", "User");
+                res.redirect("/userView");
+            }
+
+        }
+        else {
+            res.send("Wrong Credientials!");
         }
     })
 });
@@ -62,14 +98,14 @@ router.post('/signUp', (req, res) => {
     const Query = `INSERT INTO ADMIN VALUES('${username}','${password}')`;
     connection.query(Query, function (err, result) {
         if (err) throw err;
-        res.redirect("view");
+        res.redirect("/view");
       
     })
 
 });
 
 //fetching details from database to show user
-router.get("/view", (req, res) => {
+router.get("/view",Auth, (req, res) => {
     const dataCountQuery = "SELECT COUNT(*) FROM users";
     connection.query(dataCountQuery, function(err,result){
         if(err) throw err;
@@ -97,9 +133,38 @@ router.get("/view", (req, res) => {
         })
     });
 });
+//routing for userview
+router.get("/userview", (req, res) => {
+    const dataCountQuery = "SELECT COUNT(*) FROM users";
+    connection.query(dataCountQuery, function(err,result){
+        if(err) throw err;
+
+        let dataCount = result[0]["COUNT(*)"];
+        let pageNo = req.query.page ? req.query.page : 1;
+        let dataPerPages = req.query.data ? req.query.data : 2;
+        let startLimit = (pageNo - 1) * dataPerPages;
+        let totalPages = Math.ceil(dataCount/dataPerPages);
+
+        // console.log(dataCount, "\n", pageNo, "\n",dataPerPages, "\n",startLimit, "\n",totalPages, "\n");
+
+        const Query = `SELECT * FROM users LIMIT ${startLimit}, ${dataPerPages}`;
+        connection.query(Query, function(err,result){
+            if(err) throw err;
+            // res.send(result);
+            res.render( "userview", 
+                 {
+                    data: result,
+                    pages: totalPages,
+                    CurrentPage: pageNo,
+                    lastPage: totalPages
+                 }
+            );
+        })
+    });
+});
 
 //horizontal view
-router.get("/horizontal", (req, res) => {
+router.get("/horizontal",(req, res) => {
     const dataCountQuery = "SELECT COUNT(*) FROM users";
     connection.query(dataCountQuery, function(err,result){
         if(err) throw err;
@@ -187,10 +252,10 @@ router.post('/search', (req, res) => {
     });
 });
 
-router.get("/add", (req, res) => { res.render("add"); });
+router.get("/add",(req, res) => { res.render("add"); });
 
 //saving data in database
-router.post('/add', upload.single("img"), (req, res) => {
+router.post('/add', Auth,upload.single("img"), (req, res) => {
 
     if (!req.file) {
         return req.statusCode(404).send("No File Recieved!");
@@ -209,7 +274,7 @@ router.post('/add', upload.single("img"), (req, res) => {
     })
 });
 
-router.get("/view/:id", (req, res) => {
+router.get("/view/:id",Auth, (req, res) => {
     const id = req.params.id;
     const Query = `DELETE FROM users WHERE user_id = '${id}'`;
     connection.query(Query, function (err, result) {
@@ -218,7 +283,7 @@ router.get("/view/:id", (req, res) => {
     })
 });
 
-router.get("/update/:id", (req, res) => {
+router.get("/update/:id",Auth, (req, res) => {
     const id = req.params.id;
     const Query = `SELECT * from users WHERE user_id = '${id}'`;
     connection.query(Query, function (err, result) {
@@ -226,7 +291,7 @@ router.get("/update/:id", (req, res) => {
         res.render("update", { data: result });
     })
 });
-router.post("/update/:id", upload.single("img"), (req, res) => {
+router.post("/update/:id",Auth, upload.single("img"), (req, res) => {
 
     if (!req.file) {
         return req.statusCode(404).send("No File Recieved!");
