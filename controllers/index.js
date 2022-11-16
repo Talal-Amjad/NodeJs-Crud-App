@@ -156,7 +156,69 @@ const codeverification=(req, res) => {
         req.session.code = null;
         res.send("Wrong Verification Code!\nTry To SignUp Again...");
     }
+
+
 }
+//password change Request
+const changerequest=(req, res) => {
+
+  
+    const Email = req.body.email;
+    
+
+    const user = {Email:Email};
+    req.session.newUser = user;
+
+    const code = "1e4c734";
+
+    req.session.code = code;
+
+    let mail = transporter.sendMail({
+        from: '"Talal Amjad" <petsworld0290@gmail>',
+        to: `${Email}`,
+        subject: "Verification Code",
+        text: "Hello world?",
+        html: `<h1>PetsWorld Verification Code!</h1>
+               <p><b>Your Code is : ${code}</b></p>`
+    });
+    res.render("updatepassword");
+};
+//update password
+const updatepassword=(req,res)=>
+{
+    const username = req.body.username;
+    const code1 = req.body.code;
+    const password = req.body.password;
+    const user = {UserName:username,Password:password};
+    req.session.newUser = user;
+
+    const code = "1e4c734";
+
+    req.session.code = code;
+    const Query = `SELECT * from admin WHERE UserName = '${username}'`;
+    connection.query(Query, function (err, result, fields) {
+        if (err) throw err;
+        if (result.length > 0) {
+            if (code1!=code){
+                res.send('Invalid Verification Code')
+            }
+        
+            else{
+                const Query1 = `UPDATE admin SET password = '${password}' WHERE username = '${username}'`;
+                connection.query(Query1, function (err, result) {
+                    if (err) throw err;
+                    res.redirect("/signIn");
+                })
+            }
+           
+        }
+        else{
+            res.send('Wrong details')
+        }
+    })
+}
+
+
 //register user as Admin
 const register=(req, res) => {
 
@@ -432,6 +494,8 @@ module.exports = {
     signup,
     codeverification,
     register,
+    changerequest,
+    updatepassword,
     adminview,
     userview,
     horizontal,

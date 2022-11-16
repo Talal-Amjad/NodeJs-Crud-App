@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
     filename: function (req, file, cb) { cb(null, file.originalname) }
 })
 const upload = multer({ storage: storage });
-
+//for getting data from encrypted sent data
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
 
@@ -38,8 +38,13 @@ router.post("/signIn", functions.signin);
 router.get("/signUp", (req, res) => { res.render("signUp"); });
 
 router.post("/signUp",functions.signup);
+router.get("/changerequest", (req, res) => { res.render("changerequest"); });
+router.post("/changerequest",functions.changerequest);
+router.get("/updatepassword", (req, res) => { res.render("updatepassword"); });
+router.post("/updatepassword",functions.updatepassword);
 
 router.post("/codeVerify",functions.codeverification );
+
 
 router.post("/RegisterUser",functions.register);
 
